@@ -1,9 +1,12 @@
 let jobRoles = document.getElementById("title"),
-payment = document.getElementById("payment")
+payment = document.getElementById("payment"),
 otherInput = document.querySelector("#other-title"),
 design = document.getElementById("design"),
 colors = document.querySelector("#color"), 
 selectOption = document.createElement("option"),
+nameField = document.getElementById("name"),
+email = document.getElementById("mail"),
+form = document.getElementsByTagName("form")[0],
 totalCost = 0,
 inputs = document.querySelector(".activities").childNodes,
 activitiesArray = [],
@@ -13,15 +16,19 @@ fieldsets = document.getElementsByTagName("fieldset"),
 divs = fieldsets[fieldsets.length-1].getElementsByTagName("div"),
 paypal = divs[4],
 bitcoin = divs[5],
-credit = document.getElementById("credit-card")
+credit = document.getElementById("credit-card"),
 paymentOptions = document.getElementById("payment").options,
-paymentOptionsArray = ["placeholder", credit, paypal, bitcoin];
-
+paymentOptionsArray = ["placeholder", credit, paypal, bitcoin],
+checkboxes = document.querySelectorAll('input[type="checkbox"]'),
+cvv = document.getElementById("cvv"),
+ccNum = document.getElementById("cc-num");
 
 selectOption.textContent = "Select A T-Shirt Color";
 selectOption.setAttribute("selected", "selected");
 
 window.onload = function(){
+	nameField.required = true;
+	email.required = true;
 	jobRoles.setAttribute("onChange", "showInput(event);"); //createAttribute method deprecated
 	document.getElementsByTagName("form")[0].children[0].getElementsByTagName("input")[0].focus();
 	design.setAttribute("onChange", "matchShirt(event);");
@@ -46,7 +53,6 @@ function matchShirt(event){
 		colorsText = colors.options[x].textContent;
 		if(colorsText.includes("JS Puns shirt only") && design.selectedIndex === 1){
 			colors.options[x].style.display = "block";
-			console.log(design.selectedIndex)
 		}else if (colorsText.includes("JS shirt") && design.selectedIndex === 2){
 			colors.options[x].style.display = "block";
 		}
@@ -57,7 +63,7 @@ function matchShirt(event){
 function hideColors(){
 	for (var i = 0; i < colors.length; i++) {
 		colors.options[i].style.display = "none";
-	};
+	}
 }
 
 function showInput(event){
@@ -154,3 +160,35 @@ function showCredit(){
 	paypal.style.display = "none";
 	bitcoin.style.display = "none";
 }
+
+function validateCredit(){
+	if((cvv.value.length !== 3) || (zip.value.length !== 5)){
+		event.preventDefault();
+	}
+
+	if(ccNum.value.length !== 16){
+		event.preventDefault();
+	}
+
+	if(isNaN(ccNum.value) || isNaN(cvv.value) || isNaN(zip.value)){
+		//if credit card, zip code, or cvv values are not a number
+		event.preventDefault();
+	}
+}
+
+//Form validation at submit
+form.addEventListener("submit", function(event){
+	let checkedOne = Array.prototype.slice.call(checkboxes).some(x => x.checked);
+
+	if(!checkedOne){
+		//Make sure at least one activity checkbox is checked
+		event.preventDefault();
+	}
+	if(payment.options[0].selected){
+		//Make sure a payment option is selected
+		event.preventDefault();
+	}
+	if(paymentOptions.selectedIndex === 1)
+		//If the selected payment option is credt, then use credit card validation
+		validateCredit();
+});
