@@ -29,6 +29,7 @@ selectOption.setAttribute("selected", "selected");
 window.onload = function(){
 	nameField.required = true;
 	email.required = true;
+	otherInput.style.display = "none";
 	jobRoles.setAttribute("onChange", "showInput(event);"); //createAttribute method deprecated
 	document.getElementsByTagName("form")[0].children[0].getElementsByTagName("input")[0].focus();
 	design.setAttribute("onChange", "matchShirt(event);");
@@ -162,17 +163,27 @@ function showCredit(){
 }
 
 function validateCredit(){
-	if((cvv.value.length !== 3) || (zip.value.length !== 5)){
+	let valid = true;
+	if((cvv.value.length !== 3) || isNaN(cvv.value)){
+		cvv.style.borderColor = "red";
 		event.preventDefault();
+	}else{
+		cvv.style.borderColor = "";
 	}
 
-	if(ccNum.value.length !== 16){
+	if((ccNum.value.length !== 16) || isNaN(ccNum.value)){
+		ccNum.style.borderColor = "red";
 		event.preventDefault();
+	}else{
+		ccNum.style.borderColor = "";
 	}
 
-	if(isNaN(ccNum.value) || isNaN(cvv.value) || isNaN(zip.value)){
+	if((zip.value.length !== 5) || isNaN(zip.value)){
 		//if credit card, zip code, or cvv values are not a number
+		zip.style.borderColor = "red";
 		event.preventDefault();
+	}else{
+		zip.style.borderColor = "";
 	}
 }
 
